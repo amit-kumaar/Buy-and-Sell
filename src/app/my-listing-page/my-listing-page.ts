@@ -1,5 +1,5 @@
-import { Component } from '@angular/core';
-import { fakeListings } from '../fake-data';
+import { Component, signal } from '@angular/core';
+import { ListingsService } from '../listings';
 import { Listing } from '../types';
 import { NgFor } from '@angular/common';
 import { RouterLink } from "@angular/router";
@@ -11,14 +11,20 @@ import { RouterLink } from "@angular/router";
   styleUrl: './my-listing-page.css',
 })
 export class MyListingPage {
-  listing:Listing[]=[];
+  listings = signal<Listing[]>([]);
 
- constructor(){}
+ constructor(
+  private listingsService:ListingsService,
+ ){}
 
  ngOnInit():void{
-    this.listing=fakeListings;
+    this.listingsService.getListingsForUser()
+    .subscribe(listings => this.listings.set(listings));
   }
  onDeleteClicked(listingId:string):void{
-   alert(`Deleting your listing with id ${listingId}`)
+    this.listingsService.deleteListing(listingId)
+    .subscribe(()=>{
+      this.listings.update(list => list.filter(l => l.id !== listingId));
+    })
  }
 }

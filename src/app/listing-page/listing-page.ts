@@ -1,21 +1,20 @@
 import { Component } from '@angular/core';
 import { Listing } from '../types';
-import { fakeListings } from '../fake-data';
-import { NgForOf } from '@angular/common';
+import { NgForOf, AsyncPipe } from '@angular/common';
 import { RouterLink } from "@angular/router";
+import { ListingsService } from '../listings';
+import { Observable } from 'rxjs';
 
 @Component({
   selector: 'app-listing-page',
-  imports: [NgForOf, RouterLink],
+  imports: [NgForOf, AsyncPipe, RouterLink],
   templateUrl: './listing-page.html',
   styleUrl: './listing-page.css',
 })
 export class ListingPage {
-  listing:Listing[]=[];
- 
-  constructor(){}
+  listings$: Observable<Listing[]>;
 
-  ngOnInit():void{
-    this.listing=fakeListings;
+  constructor(private listingsService: ListingsService) {
+    this.listings$ = this.listingsService.getListings();
   }
 }

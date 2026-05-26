@@ -8,7 +8,7 @@ import { ListingDetailPage } from './listing-detail-page/listing-detail-page';
 
 export const routes: Routes = [
     {path:'',redirectTo:'/listing',pathMatch:'full'},
-    {path:'listing',component:ListingPage,pathMatch:'full'},
+    {path:'listing',component:ListingPage},
     {path:'listing/:id',component:ListingDetailPage},
     {path:'contact/:id',component:ContactPage},
     {path:'edit-listing/:id',component:EditListingPage},

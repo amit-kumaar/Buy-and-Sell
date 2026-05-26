@@ -1,29 +1,34 @@
-import { Component } from '@angular/core';
+import { Component, signal } from '@angular/core';
 import { ListingDataForm } from '../listing-data-form/listing-data-form';
 import { ActivatedRoute, Router } from '@angular/router';
 import { Listing } from '../types';
-import { fakeListings } from '../fake-data';
+import { ListingsService } from '../listings';
+import { NgIf } from '@angular/common';
 
 @Component({
   selector: 'app-edit-listing-page',
-  imports: [ListingDataForm],
+  imports: [ListingDataForm, NgIf],
   templateUrl: './edit-listing-page.html',
   styleUrl: './edit-listing-page.css',
 })
 export class EditListingPage {
-listing:Listing | undefined;
+listing = signal<Listing | undefined>(undefined);
   constructor(
     private router:Router,
-    private route:ActivatedRoute
+    private route:ActivatedRoute,
+    private listingsService:ListingsService,
   ){}
 
   ngOnInit():void{
     const id=this.route.snapshot.paramMap.get('id');
-    this.listing=fakeListings.find(listing=>listing.id===id)!
+    this.listingsService.getListingById(id)
+    .subscribe(listing => this.listing.set(listing));
   }
 
-  onSubmit():void{
-    alert('Saving changes to the listing...')
-    this.router.navigateByUrl('/my-listing')
+  onSubmit(listing:Listing):void{
+    this.listingsService.editListing(listing.id, listing.name, listing.description, listing.price)
+    .subscribe(()=>{
+      this.router.navigateByUrl('/my-listing')
+    })
   }
 }
