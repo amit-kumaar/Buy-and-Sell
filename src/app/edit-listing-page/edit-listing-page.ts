@@ -26,7 +26,8 @@ listing = signal<Listing | undefined>(undefined);
   }
 
   onSubmit(listing:Listing):void{
-    this.listingsService.editListing(listing.id, listing.name, listing.description, listing.price)
+    const id = this.route.snapshot.paramMap.get('id')!;
+    this.listingsService.editListing(id, listing.name, listing.description, listing.price)
     .subscribe(()=>{
       this.router.navigateByUrl('/my-listing')
     })
